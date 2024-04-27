@@ -7,7 +7,7 @@ const app = express()
 const port = 3000;
 
 //se crea en el servidor un arreglo de nombres
-const usuarios = ["Tulio", "Patana", "Juanin", "Policarpo", "Juan Carlos", "Sr. Manguera", "Guaripolo"];
+const usuarios = {"usuarios": ["tulio", "patana", "juanin", "policarpo", "juan carlos", "sr. manguera", "guaripolo"]};
 
 //escuchar conexion al puerto 3000
 app.listen(port, ()=>{
@@ -23,16 +23,19 @@ app.get("/", (req, res) => {
 
 //se devuelve el arreglo de usuarios en formato JSON
 app.get("/abracadabra/usuarios", (req, res) => {
-    const registros = { usuarios };
-    res.send(JSON.stringify(registros));
+    res.send(usuarios)
   });
 
   //se crea un middleware para validar que el usuario recibido como parámetro “usuario”
-  app.use("/abracadabra/juego/:usuario", (req, res, next) => {
-    const nombreUsuario = req.params.usuario;
-    const isUser = usuarios.map((usuarios) => usuarios.toLowerCase()).includes(nombreUsuario.toLowerCase());
-  isUser ? next() : res.sendFile(__dirname + "/assets/who.jpeg");
-});
+  app.use("/abracadabra/juego/:usuario", (req, res, next) =>{
+    const usuarioReq = req.params.usuario
+
+    if (usuarios.usuarios.find(data => data == usuarioReq) ) {
+        next()
+    } else {
+        res.sendFile(__dirname + "/assets/who.jpeg")
+    }
+})
 
 //ruta GET correspondiente:
 app.get("/abracadabra/juego/:usuario", (req, res, next) => {
@@ -41,7 +44,7 @@ app.get("/abracadabra/juego/:usuario", (req, res, next) => {
 
   //se crea una ruta que valide si el parámetro “n” coincide con el número generado de forma aleatoria
 app.get("/abracadabra/conejo/:n", (req, res) => {
-    const num = Math.floor(Math.random() * (5 - 1)) + 1;
+    const num = Math.floor(Math.random() * 4) + 1;
     const n = req.params.n;
 
   
